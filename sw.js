@@ -1,5 +1,5 @@
 // Service worker do app Showroom: guarda só a "casca" do app. Os dados sempre vêm da planilha.
-const CACHE = 'showroom-v2';
+const CACHE = 'showroom-v3';
 const CASCA = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', 'logo.png'];
 
 self.addEventListener('install', e => {

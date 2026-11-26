@@ -177,8 +177,8 @@
         <h2 id="us-form-tit">Novo usuário</h2>
         <label>Nome</label><input id="us-nome" autocomplete="off">
         <label>Perfil</label>
-        <select id="us-perfil"><option>Concierge</option><option>Especialista</option><option>Admin</option></select>
-        <label>ID do usuário no DeepSales <span class="peq">(obrigatório para Especialista)</span></label>
+        <select id="us-perfil"><option>Concierge</option><option value="Embaixadora">Embaixadora (concierge + especialista)</option><option>Especialista</option><option>Admin</option></select>
+        <label>ID do usuário no DeepSales <span class="peq">(obrigatório para Especialista e Embaixadora)</span></label>
         <input id="us-ds" autocomplete="off" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
         <label id="us-pin-lbl">PIN (4 a 8 números)</label><input id="us-pin" inputmode="numeric" autocomplete="off">
         <label style="display:flex;gap:8px;align-items:center;color:var(--txt)"><input type="checkbox" id="us-ativo" style="width:auto" checked> Ativo</label>
@@ -254,16 +254,17 @@ async function iniciar() {
   const p = S.base.perfil;
   $('#usuario').textContent = S.nome.split(' ')[0];
   $('#btn-usuarios').classList.toggle('oculto', p !== 'Admin');
+  const registra = ['Concierge', 'Embaixadora', 'Admin'].includes(p), atende = ['Especialista', 'Embaixadora', 'Admin'].includes(p);
   const abas = [];
-  if (p === 'Concierge' || p === 'Admin') abas.push(['nova', 'Nova visita']);
-  if (p === 'Especialista' || p === 'Admin') abas.push(['minhas', p === 'Admin' ? 'Feedbacks' : 'Minhas visitas']);
+  if (registra) abas.push(['nova', 'Nova visita']);
+  if (atende) abas.push(['minhas', p === 'Admin' ? 'Feedbacks' : 'Minhas visitas']);
   abas.push(['hoje', 'Hoje']);
   $('#nav').innerHTML = abas.map(a => `<button data-aba="${a[0]}">${a[1]}</button>`).join('');
   $('#nav').querySelectorAll('button').forEach(b => b.onclick = () => mostrar(b.dataset.aba));
   $('#nv-esp').innerHTML = '<option value="">Escolha…</option>' + S.base.especialistas.map(n => `<option>${esc(n)}</option>`).join('');
   $('#tela-login').classList.add('oculto'); $('#tela-app').classList.remove('oculto');
   mostrar(abas[0][0]);
-  if (p === 'Especialista' || p === 'Admin') {
+  if (atende) {
     atualizarCardNotif();
     S.vistos = new Set(lerLS('show_vistos_' + S.nome) || []);
     S.primeiroPoll = true;
